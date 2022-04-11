@@ -1,0 +1,17 @@
+# Auto Share Script Installer By It's RedHydra
+
+import os
+
+print("\n\033[92m[\033[37m*\033[92m]\033[37m Installing Packages...\n")
+
+os.system("apt update -y && apt upgrade -y && pkg install python -y && pip install requests")
+
+print("\n\033[92m[\033[37m*\033[92m]\033[37m Setting Up Files...\n")
+
+os.system("curl https://raw.githubusercontent.com/root60/AnonShare/main/share --output /data/data/com.termux/files/usr/bin/share")
+os.system("chmod +x /data/data/com.termux/files/usr/bin/share")
+
+os.system("clear")
+os.system("figlet It's RedHydra")
+print("\n\033[92m[\033[37m*\033[92m]\033[37m Setting Up Successfull...\n")
+os.system("share")
