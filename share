@@ -21,10 +21,10 @@ def psb(x):
 #UserHelp
 def help_user():
     print("Uses:")
-    print("\nFor Upload : share -u \033[3m(File Name)\033[0m")
-    print("Or : share --upload \033[3m(File Name)\033[0m")
-    print("\nFor Download : share -d \033[3m(File URL)\033[0m")
-    print("Or : share --download \033[3m(File URL)\033[0m\n")
+    print("\nFor Upload : AnonShare -u \033[3m(File Name)\033[0m")
+    print("Or : AnonShare --upload \033[3m(File Name)\033[0m")
+    print("\nFor Download : AnonShare -d \033[3m(File URL)\033[0m")
+    print("Or : AnonShare --download \033[3m(File URL)\033[0m\n")
     sys.exit()
 
 #ProcessArguments
