@@ -1,0 +1,118 @@
+#!/bin/python
+
+# Anonymous File Uploader and Downloader By It's RedHydra
+# Author : It's RedHydra
+# GitHub : https://github.com/root60
+# Supports AnonFiles Download Links Only
+
+import os
+import sys
+import json
+import time
+import requests
+
+
+def psb(x):
+    for t in x + "\n":
+        sys.stdout.write(t)
+        sys.stdout.flush()
+        time.sleep(0.02)
+
+#UserHelp
+def help_user():
+    print("Uses:")
+    print("\nFor Upload : share -u \033[3m(File Name)\033[0m")
+    print("Or : share --upload \033[3m(File Name)\033[0m")
+    print("\nFor Download : share -d \033[3m(File URL)\033[0m")
+    print("Or : share --download \033[3m(File URL)\033[0m\n")
+    sys.exit()
+
+#ProcessArguments
+def process(method, link):
+    if (method == "-u") or (method =="--upload"):
+        upload(link)
+    elif (method == "-d") or (method == "--download"):
+        download(link)
+    else:
+        help_user()
+
+#UploadFile
+def upload(path):
+    if not os.path.exists(path):
+        psb("\n\033[92m[\033[91m!\033[92m] File Does Not Exists!\n\033[37m")
+        sys.exit()
+    file_name = path
+    if ("/" in path):
+        file_name = path.split("/")[-1]
+    
+    psb("\n\033[92m[\033[37m*\033[92m] Please Wait, Uploading Your File...")
+    files = {
+        'file': (file_name, open(path, 'rb')),
+    }
+    try:
+        data = requests.post("https://api.anonfiles.com/upload", files=files).json()
+    except:
+        psb("\n\033[92m[\033[91m!\033[92m] Failed To Upload File..!")
+        psb("\033[92m[\033[91m!\033[92m] Please Turn On a VPN and Try Again...!")
+        time.sleep(1)
+        l = input("\n\033[92m[\033[37m*\033[92m] Press Enter To Try Again....\033[37m")
+        upload(path)
+    try:
+        long_url = str(data["data"]["file"]["url"]["full"])
+        short_url = str(data["data"]["file"]["url"]["short"])
+    except:
+        psb("\n\033[92m[\033[91m!\033[92m] Error Occured, Trying Again...!\n\033[37m")
+        upload(path)
+    
+    print("\n\033[92m[\033[37m01\033[92m] Long URL : \033[37m"+long_url)
+    print("\n\033[92m[\033[37m02\033[92m] Short URL : \033[37m"+short_url+"\n\033[37m")�
+    
+    sys.exit()
+
+#DownloadFile
+def download(link):
+    psb("\n\033[92m[\033[37m*\033[92m] Checking URL...")
+    if not ("anonfiles.com" in link.lower()):
+        psb("\n\033[92m[\033[91m!\033[92m] Only AnonFiles Download Links Are Supported!\n\033[37m")
+        sys.exit()
+    if not os.path.exists("/sdcard/Anon_Downloads"):
+        os.mkdir("/sdcard/Anon_Downloads")
+    response = requests.get(link)
+    if not (response.status_code == 200):
+        psb("\n\033[92m[\033[91m!\033[92m] Entered URL File Does Not Exists!\n\033[37m")
+        sys.exit()
+    psb("\n\033[92m[\033[37m*\033[92m] Please Wait, Downloading Your File...")
+    
+    file = open(".temp.txt", "w")
+    file.write(response.text)
+    file.close()
+    opn = open(".temp.txt", "r").readlines()
+    line = 62
+    url = opn[line]
+    while not "href=\"https://cdn-" in url:
+            line = line + 1
+            url = opn[line]
+    start = url.find("href=\"") + len("href=\"")
+    end = url.find("\">")
+    download_link = url[start:end]
+    download_path = "/sdcard/Anon_Downloads/"
+    
+    file_name = download_link.split("/")[-1]
+    os.system("curl -fsSL "+download_link+" --output "+download_path+file_name)
+    psb("\n[\033[37m*\033[92m] Your File Downloaded Successfully..")
+    psb("\n\033[92m[\033[37m*\033[92m] Saved in "+download_path+" Directory...\n\033[40;37;0m")
+    sys.exit()
+
+#MainProcess         
+if __name__=='__main__':
+     try:
+         arg1 = sys.argv[1]
+         try:
+             arg2 = sys.argv[2]
+         except IndexError:
+             help_user()
+     except IndexError:
+         help_user()
+     
+     process(arg1, arg2)
+
